@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MD Viewer">
+<meta name="theme-color" content="#FAF8F5">
+<title>MD Viewer</title>
+
+<!-- Inline manifest via data URI -->
+<link rel="manifest" href="data:application/json,{%22name%22:%22MD%20Viewer%22,%22short_name%22:%22MD%20Viewer%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23FAF8F5%22,%22theme_color%22:%22%23FAF8F5%22}">
+
+<!-- Apple touch icon (inline SVG → data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23C5694A'/><text x='90' y='125' font-size='100' font-family='Georgia,serif' fill='white' text-anchor='middle'>M</text></svg>">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,300;1,8..60,400;1,8..60,500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #FAF8F5;
+    --bg-bar: #F0EDE8;
+    --bg-hover: #E8E4DE;
+    --bg-active: #DDD8D0;
+    --border: #DDD8D0;
+    --text-1: #2D2B28;
+    --text-2: #6B665E;
+    --text-3: #9A9389;
+    --accent: #C5694A;
+    --accent-light: #F4E8E3;
+    --accent-hover: #B35A3D;
+    --serif: 'Source Serif 4', 'PingFang SC', 'Microsoft YaHei', Georgia, serif;
+    --sans: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+    --mono: 'SF Mono', 'Menlo', monospace;
+    --size: 17px;
+    --lh: 1.78;
+    --ease: cubic-bezier(.4,0,.2,1);
+
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: var(--sans);
+  }
+
+  /* ── App Shell ── */
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    padding-top: calc(8px + var(--sat));
+    padding-left: calc(12px + var(--sal));
+    padding-right: calc(12px + var(--sar));
+    background: var(--bg-bar);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    min-height: calc(52px + var(--sat));
+  }
+
+  .topbar-title {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-2);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .15s var(--ease), color .15s var(--ease);
+  }
+  .icon-btn:active { background: var(--bg-active); color: var(--text-1); }
+  .icon-btn.accent { color: var(--accent); }
+
+  .font-label {
+    font-size: 12px;
+    color: var(--text-3);
+    min-width: 28px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .divider {
+    width: 1px;
+    height: 22px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* hidden file input */
+  #file-input { display: none; }
+
+  /* ── Content Area ── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 28px 20px;
+    padding-bottom: calc(28px + var(--sab));
+    padding-left: calc(20px + var(--sal));
+    padding-right: calc(20px + var(--sar));
+  }
+
+  .content-inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* ── Welcome ── */
+  .welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 30vh;
+    color: var(--text-3);
+  }
+  .welcome svg { margin-bottom: 20px; opacity: 0.25; }
+  .welcome h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+  .welcome p { font-size: 14px; line-height: 1.6; }
+  .welcome-btn {
+    margin-top: 24px;
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .welcome-btn:active { background: var(--accent-hover); }
+
+  /* ── Outline Drawer ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .28s var(--ease);
+    z-index: 90;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: min(300px, 80vw);
+    background: var(--bg-bar);
+    transform: translateX(-100%);
+    transition: transform .28s var(--ease);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--sat);
+    padding-left: var(--sal);
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .drawer-header h3 {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-1);
+  }
+
+  .drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 10px;
+    padding-bottom: calc(8px + var(--sab));
+  }
+
+  .outline-item {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .outline-item:active { background: var(--bg-hover); }
+
+  .outline-empty {
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Markdown Body ── */
+  .md {
+    font-family: var(--serif);
+    font-size: var(--size);
+    line-height: var(--lh);
+    color: var(--text-1);
+  }
+
+  .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+    font-family: var(--serif);
+    font-weight: 600;
+    color: var(--text-1);
+    margin-top: 1.6em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
+  }
+  .md h1:first-child, .md h2:first-child, .md h3:first-child { margin-top: 0; }
+  .md h1 { font-size: 1.7em; font-weight: 700; padding-bottom: 0.25em; border-bottom: 1px solid var(--border); }
+  .md h2 { font-size: 1.4em; }
+  .md h3 { font-size: 1.15em; }
+
+  .md p { margin-bottom: 0.9em; }
+  .md p:last-child { margin-bottom: 0; }
+
+  .md a { color: var(--accent); text-decoration: none; }
+  .md strong { font-weight: 600; }
+  .md em { font-style: italic; }
+
+  .md blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 2px 0 2px 16px;
+    margin: 1em 0;
+    color: var(--text-2);
+  }
+
+  .md ul, .md ol { padding-left: 1.6em; margin-bottom: 0.9em; }
+  .md li { margin-bottom: 0.3em; }
+  .md li > ul, .md li > ol { margin-bottom: 0; margin-top: 0.3em; }
+
+  .md code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--bg-bar);
+    padding: 2px 5px;
+    border-radius: 4px;
+    color: var(--accent-hover);
+  }
+  .md pre {
+    background: #2D2B28;
+    color: #E8E4DE;
+    padding: 14px 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1em 0;
+    line-height: 1.5;
+  }
+  .md pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: 0.84em;
+  }
+
+  .md table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    font-family: var(--sans);
+    font-size: 0.88em;
+  }
+  .md th, .md td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .md th {
+    font-weight: 600;
+    color: var(--text-2);
+    font-size: 0.82em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .md img { max-width: 100%; border-radius: 8px; margin: 0.8em 0; }
+  .md hr { border: none; height: 1px; background: var(--border); margin: 1.8em 0; }
+  .md input[type="checkbox"] { margin-right: 5px; accent-color: var(--accent); }
+
+  /* Scrollbar — thin for iPad, hidden on iPhone */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <button class="icon-btn" id="btn-outline" onclick="toggleOutline()" aria-label="Outline">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+    </button>
+
+    <span class="topbar-title" id="title">MD Viewer</span>
+
+    <button class="icon-btn" onclick="changeFontSize(-1)" aria-label="Smaller text">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><text x="4" y="18" font-size="16" font-family="Georgia" fill="currentColor" stroke="none">A</text><line x1="17" y1="13" x2="23" y2="13" stroke-width="2.2"/></svg>
+    </button>
+    <span class="font-label" id="font-label">17</span>
+    <button class="icon-btn" onclick="changeFontSize(1)" aria-label="Larger text">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><text x="2" y="18" font-size="18" font-family="Georgia" fill="currentColor" stroke="none">A</text><line x1="17" y1="13" x2="23" y2="13" stroke-width="2.2"/><line x1="20" y1="10" x2="20" y2="16" stroke-width="2.2"/></svg>
+    </button>
+
+    <div class="divider"></div>
+
+    <button class="icon-btn accent" onclick="document.getElementById('file-input').click()" aria-label="Import file">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </button>
+    <input type="file" id="file-input" accept=".md,.markdown,.txt" onchange="importFile(this)">
+  </div>
+
+  <!-- Content -->
+  <div class="content" id="content-scroll">
+    <div class="content-inner" id="content">
+      <div class="welcome">
+        <svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="8" y="4" width="48" height="56" rx="4"/>
+          <line x1="18" y1="18" x2="46" y2="18"/>
+          <line x1="18" y1="26" x2="42" y2="26"/>
+          <line x1="18" y1="34" x2="38" y2="34"/>
+          <line x1="18" y1="42" x2="44" y2="42"/>
+        </svg>
+        <h2>Markdown Viewer</h2>
+        <p>Import a .md file to start reading</p>
+        <button class="welcome-btn" onclick="document.getElementById('file-input').click()">Import File</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Outline Drawer -->
+<div class="overlay" id="overlay" onclick="toggleOutline()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h3>Outline</h3>
+    <button class="icon-btn" onclick="toggleOutline()" aria-label="Close outline">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="outline-list">
+    <div class="outline-empty">Open a file to see<br>its outline</div>
+  </div>
+</aside>
+
+<script>
+  // ══════════════════════════════════════════════════
+  //  State
+  // ══════════════════════════════════════════════════
+  let currentSize = 17;
+  let outlineOpen = false;
+
+  // ══════════════════════════════════════════════════
+  //  Markdown Preprocessing — fix bold + Unicode punct
+  // ══════════════════════════════════════════════════
+  const isPunct = (ch) => /\p{P}/u.test(ch);
+
+  function preprocessMarkdown(text) {
+    const lines = text.split('\n');
+    let inFence = false;
+
+    return lines.map(line => {
+      if (/^`{3,}/.test(line.trimStart())) { inFence = !inFence; return line; }
+      if (inFence) return line;
+      line = restoreEscapedStars(line);
+      line = fixBoldInLine(line);
+      return line;
+    }).join('\n');
+  }
+
+  function restoreEscapedStars(line) {
+    let out = '', inCode = false;
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '`') { inCode = !inCode; out += '`'; continue; }
+      if (!inCode
+          && line[i] === '\\' && line[i+1] === '*'
+          && line[i+2] === '\\' && line[i+3] === '*') {
+        out += '**'; i += 3; continue;
+      }
+      out += line[i];
+    }
+    return out;
+  }
+
+  function fixBoldInLine(line) {
+    let result = '', i = 0;
+    while (i < line.length) {
+      if (line[i] === '`') {
+        let end = line.indexOf('`', i + 1);
+        if (end === -1) { result += line.substring(i); break; }
+        result += line.substring(i, end + 1);
+        i = end + 1; continue;
+      }
+      if (line[i] === '*' && line[i+1] === '*'
+          && !(i + 2 < line.length && line[i+2] === '*')
+          && !(i > 0 && line[i-1] === '*')) {
+        let closeIdx = findClosingBold(line, i + 2);
+        if (closeIdx !== -1) {
+          let ca = line[i + 2] || '', cb = line[closeIdx - 1] || '';
+          if (isPunct(ca) || isPunct(cb)) {
+            result += '<strong>' + line.substring(i + 2, closeIdx) + '</strong>';
+            i = closeIdx + 2; continue;
+          }
+        }
+        result += '**'; i += 2; continue;
+      }
+      result += line[i]; i++;
+    }
+    return result;
+  }
+
+  function findClosingBold(line, start) {
+    for (let j = start; j < line.length - 1; j++) {
+      if (line[j] === '`') {
+        let end = line.indexOf('`', j + 1);
+        if (end === -1) return -1;
+        j = end; continue;
+      }
+      if (line[j] === '*' && line[j+1] === '*'
+          && !(j + 2 < line.length && line[j+2] === '*')
+          && !(j > 0 && line[j-1] === '*')) {
+        return j;
+      }
+    }
+    return -1;
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Import File
+  // ══════════════════════════════════════════════════
+  async function importFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const text = await file.text();
+    document.getElementById('title').textContent = file.name;
+
+    const processed = preprocessMarkdown(text);
+    const html = marked.parse(processed, { breaks: true, gfm: true });
+    document.getElementById('content').innerHTML = `<div class="md">${html}</div>`;
+
+    buildOutline();
+    document.getElementById('content-scroll').scrollTop = 0;
+
+    // Reset input so same file can be re-imported
+    input.value = '';
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Outline
+  // ══════════════════════════════════════════════════
+  function buildOutline() {
+    const headings = document.querySelectorAll('.md h1');
+    const list = document.getElementById('outline-list');
+
+    if (headings.length === 0) {
+      list.innerHTML = '<div class="outline-empty">No H1 headings<br>in this file</div>';
+      return;
+    }
+
+    list.innerHTML = Array.from(headings).map((h, i) => {
+      h.id = 'h1-' + i;
+      const text = h.textContent.replace(/'/g, '&#39;');
+      return `<div class="outline-item" onclick="goToHeading('h1-${i}')">${text}</div>`;
+    }).join('');
+  }
+
+  function goToHeading(id) {
+    toggleOutline();
+    // Small delay so drawer closes before scroll
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  }
+
+  function toggleOutline() {
+    outlineOpen = !outlineOpen;
+    document.getElementById('drawer').classList.toggle('open', outlineOpen);
+    document.getElementById('overlay').classList.toggle('open', outlineOpen);
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Font Size
+  // ══════════════════════════════════════════════════
+  function changeFontSize(delta) {
+    currentSize = Math.min(26, Math.max(13, currentSize + delta));
+    document.documentElement.style.setProperty('--size', currentSize + 'px');
+    document.getElementById('font-label').textContent = currentSize;
+  }
+
+  // ── Configure marked ──
+  marked.setOptions({ headerIds: false, mangle: false });
+
+  // ══════════════════════════════════════════════════
+  //  Prevent overscroll / bounce on iOS
+  // ══════════════════════════════════════════════════
+  document.body.addEventListener('touchmove', (e) => {
+    if (!e.target.closest('.content, .drawer-body')) e.preventDefault();
+  }, { passive: false });
+</script>
+
+</body>
+</html>
