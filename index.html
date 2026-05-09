@@ -45,66 +45,166 @@
     --sar: env(safe-area-inset-right, 0px);
   }
 
-  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text-1); font-family: var(--sans); }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: var(--sans);
+  }
 
-  .app { display: flex; flex-direction: column; height: 100%; }
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 
   .topbar {
-    display: flex; align-items: center; gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 8px 12px;
     padding-top: calc(8px + var(--sat));
     padding-left: calc(12px + var(--sal));
     padding-right: calc(12px + var(--sar));
-    background: var(--bg-bar); border-bottom: 1px solid var(--border);
-    flex-shrink: 0; min-height: calc(52px + var(--sat));
+    background: var(--bg-bar);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    min-height: calc(52px + var(--sat));
     z-index: 10;
   }
-  .topbar-title {
-    flex: 1; font-size: 15px; font-weight: 600; color: var(--text-1);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    text-align: center; padding: 0 4px;
-  }
-  .icon-btn {
-    width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-    background: none; border: none; border-radius: 10px; color: var(--text-2);
-    cursor: pointer; flex-shrink: 0; transition: background .15s var(--ease), color .15s var(--ease);
-  }
-  .icon-btn:active { background: var(--bg-active); color: var(--text-1); }
-  .icon-btn.accent { color: var(--accent); }
-  .font-label {
-    font-size: 12px; color: var(--text-3); min-width: 28px; text-align: center;
-    font-variant-numeric: tabular-nums; flex-shrink: 0;
-  }
-  .divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
-  #file-input { display: none; }
 
-  .view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-  .view.active { display: flex; }
+  .topbar-title {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-2);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .15s var(--ease), color .15s var(--ease);
+  }
+
+  .icon-btn:active {
+    background: var(--bg-active);
+    color: var(--text-1);
+  }
+
+  .icon-btn.accent {
+    color: var(--accent);
+  }
+
+  .font-label {
+    font-size: 12px;
+    color: var(--text-3);
+    min-width: 28px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .divider {
+    width: 1px;
+    height: 22px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  #file-input {
+    display: none;
+  }
+
+  .view {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .view.active {
+    display: flex;
+  }
 
   .content {
-    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 28px 20px;
     padding-bottom: calc(28px + var(--sab));
     padding-left: calc(20px + var(--sal));
     padding-right: calc(20px + var(--sar));
   }
-  .content-inner { max-width: 680px; margin: 0 auto; }
+
+  .content-inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
 
   .welcome {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding-top: 30vh; color: var(--text-3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 30vh;
+    color: var(--text-3);
   }
-  .welcome svg { margin-bottom: 20px; opacity: 0.25; }
-  .welcome h2 { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--text-2); margin-bottom: 8px; }
-  .welcome p { font-size: 14px; line-height: 1.6; }
+
+  .welcome svg {
+    margin-bottom: 20px;
+    opacity: 0.25;
+  }
+
+  .welcome h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+
+  .welcome p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
   .welcome-btn {
-    margin-top: 24px; padding: 12px 28px; background: var(--accent); color: #fff;
-    border: none; border-radius: 12px; font-family: var(--sans); font-size: 15px; font-weight: 500; cursor: pointer;
+    margin-top: 24px;
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
   }
-  .welcome-btn:active { background: var(--accent-hover); }
+
+  .welcome-btn:active {
+    background: var(--accent-hover);
+  }
 
   .filelist-view {
-    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 16px;
     padding-bottom: calc(16px + var(--sab));
     padding-left: calc(16px + var(--sal));
@@ -112,112 +212,345 @@
   }
 
   .import-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 14px; margin-bottom: 20px;
-    background: var(--accent); color: #fff; border: none; border-radius: 12px;
-    font-family: var(--sans); font-size: 15px; font-weight: 500; cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
   }
-  .import-btn:active { background: var(--accent-hover); }
+
+  .import-btn:active {
+    background: var(--accent-hover);
+  }
 
   .file-entry {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px; margin-bottom: 8px;
-    background: var(--bg-bar); border-radius: 12px;
-    cursor: pointer; transition: background .12s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    background: var(--bg-bar);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background .12s;
   }
-  .file-entry:active { background: var(--bg-hover); }
 
-  .file-info { flex: 1; min-width: 0; }
+  .file-entry:active {
+    background: var(--bg-hover);
+  }
+
+  .file-info {
+    flex: 1;
+    min-width: 0;
+  }
+
   .file-name {
-    font-size: 14.5px; font-weight: 500; color: var(--text-1);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-bottom: 6px;
   }
-  .file-progress-row { display: flex; align-items: center; gap: 8px; }
+
+  .file-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .file-progress-bar {
-    flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
   }
+
   .file-progress-fill {
-    height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s var(--ease);
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width .3s var(--ease);
   }
+
   .file-progress-text {
-    font-size: 11.5px; color: var(--text-3); min-width: 32px; text-align: right;
+    font-size: 11.5px;
+    color: var(--text-3);
+    min-width: 32px;
+    text-align: right;
     font-variant-numeric: tabular-nums;
   }
 
   .file-delete {
-    width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
-    background: none; border: none; border-radius: 8px; color: var(--text-3);
-    cursor: pointer; flex-shrink: 0; transition: color .12s, background .12s;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-3);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color .12s, background .12s;
   }
-  .file-delete:active { background: var(--accent-light); color: var(--accent); }
+
+  .file-delete:active {
+    background: var(--accent-light);
+    color: var(--accent);
+  }
 
   .filelist-empty {
-    text-align: center; color: var(--text-3); font-size: 14px; line-height: 1.6; padding: 40px 0;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 40px 0;
   }
 
   .overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,.35);
-    opacity: 0; pointer-events: none; transition: opacity .28s var(--ease); z-index: 90;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .28s var(--ease);
+    z-index: 90;
   }
-  .overlay.open { opacity: 1; pointer-events: auto; }
+
+  .overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
 
   .drawer {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: min(300px, 80vw); background: var(--bg-bar);
-    transform: translateX(-100%); transition: transform .28s var(--ease);
-    z-index: 100; display: flex; flex-direction: column;
-    padding-top: var(--sat); padding-left: var(--sal);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(300px, 80vw);
+    background: var(--bg-bar);
+    transform: translateX(-100%);
+    transition: transform .28s var(--ease);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--sat);
+    padding-left: var(--sal);
   }
-  .drawer.open { transform: translateX(0); }
+
+  .drawer.open {
+    transform: translateX(0);
+  }
 
   .drawer-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
   }
-  .drawer-header h3 { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--text-1); }
+
+  .drawer-header h3 {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-1);
+  }
 
   .drawer-body {
-    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-    padding: 8px 10px; padding-bottom: calc(8px + var(--sab));
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 10px;
+    padding-bottom: calc(8px + var(--sab));
   }
 
   .outline-item {
-    display: block; padding: 12px 14px; border-radius: 8px;
-    font-family: var(--serif); font-size: 15px; line-height: 1.45;
-    color: var(--text-2); cursor: pointer; transition: background .12s;
+    display: block;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background .12s;
   }
-  .outline-item:active { background: var(--bg-hover); }
+
+  .outline-item:active {
+    background: var(--bg-hover);
+  }
+
   .outline-empty {
-    padding: 32px 16px; text-align: center; color: var(--text-3); font-size: 14px; line-height: 1.6;
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 14px;
+    line-height: 1.6;
   }
 
-  .md { font-family: var(--serif); font-size: var(--size); line-height: var(--lh); color: var(--text-1); }
+  .md {
+    font-family: var(--serif);
+    font-size: var(--size);
+    line-height: var(--lh);
+    color: var(--text-1);
+    word-break: break-word;
+  }
+
   .md h1,.md h2,.md h3,.md h4,.md h5,.md h6 {
-    font-family: var(--serif); font-weight: 600; color: var(--text-1);
-    margin-top: 1.6em; margin-bottom: 0.5em; line-height: 1.3;
+    font-family: var(--serif);
+    font-weight: 600;
+    color: var(--text-1);
+    margin-top: 1.6em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
   }
-  .md h1:first-child,.md h2:first-child,.md h3:first-child { margin-top: 0; }
-  .md h1 { font-size: 1.7em; font-weight: 700; padding-bottom: 0.25em; border-bottom: 1px solid var(--border); }
-  .md h2 { font-size: 1.4em; } .md h3 { font-size: 1.15em; }
-  .md p { margin-bottom: 0.9em; } .md p:last-child { margin-bottom: 0; }
-  .md a { color: var(--accent); text-decoration: none; }
-  .md strong { font-weight: 600; } .md em { font-style: italic; }
-  .md blockquote { border-left: 3px solid var(--accent); padding: 2px 0 2px 16px; margin: 1em 0; color: var(--text-2); }
-  .md ul,.md ol { padding-left: 1.6em; margin-bottom: 0.9em; }
-  .md li { margin-bottom: 0.3em; } .md li>ul,.md li>ol { margin-bottom: 0; margin-top: 0.3em; }
-  .md code { font-family: var(--mono); font-size: 0.86em; background: var(--bg-bar); padding: 2px 5px; border-radius: 4px; color: var(--accent-hover); }
-  .md pre { background: #2D2B28; color: #E8E4DE; padding: 14px 16px; border-radius: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1em 0; line-height: 1.5; }
-  .md pre code { background: none; padding: 0; color: inherit; font-size: 0.84em; }
-  .md table { width: 100%; border-collapse: collapse; margin: 1em 0; font-family: var(--sans); font-size: 0.88em; }
-  .md th,.md td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
-  .md th { font-weight: 600; color: var(--text-2); font-size: 0.82em; text-transform: uppercase; letter-spacing: 0.04em; }
-  .md img { max-width: 100%; border-radius: 8px; margin: 0.8em 0; }
-  .md hr { border: none; height: 1px; background: var(--border); margin: 1.8em 0; }
-  .md input[type="checkbox"] { margin-right: 5px; accent-color: var(--accent); }
 
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .md h1:first-child,.md h2:first-child,.md h3:first-child {
+    margin-top: 0;
+  }
+
+  .md h1 {
+    font-size: 1.7em;
+    font-weight: 700;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .md h2 { font-size: 1.4em; }
+  .md h3 { font-size: 1.15em; }
+
+  .md p {
+    margin-bottom: 0.9em;
+  }
+
+  .md p:last-child {
+    margin-bottom: 0;
+  }
+
+  .md a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .md strong {
+    font-weight: 600;
+  }
+
+  .md em {
+    font-style: italic;
+  }
+
+  .md blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 2px 0 2px 16px;
+    margin: 1em 0;
+    color: var(--text-2);
+  }
+
+  .md ul,.md ol {
+    padding-left: 1.6em;
+    margin-bottom: 0.9em;
+  }
+
+  .md li {
+    margin-bottom: 0.3em;
+  }
+
+  .md li>ul,.md li>ol {
+    margin-bottom: 0;
+    margin-top: 0.3em;
+  }
+
+  .md code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--bg-bar);
+    padding: 2px 5px;
+    border-radius: 4px;
+    color: var(--accent-hover);
+  }
+
+  .md pre {
+    background: #2D2B28;
+    color: #E8E4DE;
+    padding: 14px 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1em 0;
+    line-height: 1.5;
+  }
+
+  .md pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: 0.84em;
+  }
+
+  .md table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    font-family: var(--sans);
+    font-size: 0.88em;
+  }
+
+  .md th,.md td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .md th {
+    font-weight: 600;
+    color: var(--text-2);
+    font-size: 0.82em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .md img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 0.8em 0;
+  }
+
+  .md hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 1.8em 0;
+  }
+
+  .md input[type="checkbox"] {
+    margin-right: 5px;
+    accent-color: var(--accent);
+  }
+
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+  }
 </style>
 </head>
 <body>
@@ -327,17 +660,65 @@
     }
 
     const fs = load(SK_FONT);
-    if (fs) currentSize = Math.min(26, Math.max(13, parseInt(fs)));
+    if (fs) currentSize = Math.min(26, Math.max(13, parseInt(fs, 10) || 17));
 
     activeId = load(SK_ACTIVE) || null;
   }
 
   function saveFiles()  { save(SK_FILES, filesDB); }
   function saveFont()   { save(SK_FONT, String(currentSize)); }
-  function saveActive() { save(SK_ACTIVE, activeId || ''); }
+  function saveActive()  { save(SK_ACTIVE, activeId || ''); }
 
   function makeId(name) {
-    return name.replace(/[^a-zA-Z0-9_.\-]/g, '_') + '_' + Date.now().toString(36);
+    return String(name).replace(/[^a-zA-Z0-9_.\-]/g, '_') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Compatibility helpers
+  // ══════════════════════════════════════════════════
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
+  }
+
+  function readFileText(file) {
+    return new Promise((resolve, reject) => {
+      if (file && typeof file.text === 'function') {
+        file.text().then(resolve).catch(err => {
+          fallbackRead();
+        });
+      } else {
+        fallbackRead();
+      }
+
+      function fallbackRead() {
+        try {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ''));
+          reader.onerror = () => reject(reader.error || new Error('FileReader failed'));
+          reader.readAsText(file);
+        } catch (e) {
+          reject(e);
+        }
+      }
+    });
+  }
+
+  function renderMarkdownSafe(text) {
+    const src = preprocessMarkdown(text);
+
+    try {
+      if (typeof marked !== 'undefined' && marked && typeof marked.parse === 'function') {
+        return marked.parse(src, { breaks: true, gfm: true });
+      }
+    } catch (e) {}
+
+    // fallback: plain text render so iPhone/Safari never shows blank
+    return esc(src).replace(/\n/g, '<br>');
   }
 
   // ══════════════════════════════════════════════════
@@ -346,7 +727,7 @@
   const isPunct = (ch) => /\p{P}/u.test(ch);
 
   function preprocessMarkdown(text) {
-    const lines = text.split('\n');
+    const lines = String(text || '').split('\n');
     let inFence = false;
 
     return lines.map(line => {
@@ -456,7 +837,6 @@
         return j;
       }
     }
-
     return -1;
   }
 
@@ -469,20 +849,32 @@
 
     let lastId = null;
 
-    for (const f of files) {
-      const id = makeId(f.name);
-      filesDB[id] = {
-        name: f.name,
-        content: await f.text(),
-        scrollPct: 0
-      };
-      lastId = id;
+    try {
+      for (const f of files) {
+        const id = makeId(f.name);
+        const text = await readFileText(f);
+
+        filesDB[id] = {
+          name: f.name,
+          content: text,
+          scrollPct: 0
+        };
+
+        lastId = id;
+      }
+
+      saveFiles();
+      input.value = '';
+
+      renderFileList();
+
+      if (lastId) {
+        openFile(lastId);
+      }
+    } catch (e) {
+      console.error('Import failed:', e);
+      alert('Import failed. Please try another file.');
     }
-
-    saveFiles();
-    input.value = '';
-
-    if (lastId) openFile(lastId);
   }
 
   // ══════════════════════════════════════════════════
@@ -492,9 +884,6 @@
     const entry = filesDB[id];
     if (!entry) return;
 
-    // 关键修复：
-    // 只在真正切换到另一个文件时保存旧文件进度。
-    // 启动恢复 activeId 时不能先 saveCurrentScroll()，否则会把旧进度覆盖成 0。
     if (activeId && activeId !== id) {
       saveCurrentScroll();
     }
@@ -506,17 +895,17 @@
 
     document.getElementById('title').textContent = entry.name;
 
-    const html = marked.parse(preprocessMarkdown(entry.content), {
-      breaks: true,
-      gfm: true
-    });
+    // 先切到阅读视图，避免 iPhone Safari 在隐藏容器里渲染失败
+    showReading();
 
+    const html = renderMarkdownSafe(entry.content);
+
+    // 先给一个过渡内容，确保页面立即有正文容器
     document.getElementById('content').innerHTML = `<div class="md">${html}</div>`;
 
     buildOutline();
-    showReading();
 
-    // 等待 reading view 显示并完成布局后再恢复滚动位置。
+    // 双 RAF，等 iPhone 完成布局后再恢复位置
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const el = document.getElementById('content-scroll');
@@ -555,21 +944,16 @@
 
     const readingView = document.getElementById('view-reading');
 
-    // 关键修复：
-    // reading view 被隐藏时，content-scroll 的高度可能为 0。
-    // 这时不能保存，否则会把已有进度覆盖为 0。
+    // hidden view on iPhone may report 0 height; don't overwrite saved progress
     if (!readingView.classList.contains('active')) return;
 
     const el = document.getElementById('content-scroll');
     if (!el) return;
 
     const max = el.scrollHeight - el.clientHeight;
+    if (max <= 0) return;
 
-    let pct = 0;
-    if (max > 0) {
-      pct = el.scrollTop / max;
-    }
-
+    const pct = el.scrollTop / max;
     if (!Number.isFinite(pct)) return;
 
     filesDB[activeId].scrollPct = Math.min(1, Math.max(0, pct));
@@ -593,35 +977,25 @@
   // ══════════════════════════════════════════════════
   function showReading() {
     currentView = 'reading';
-
     document.getElementById('view-reading').classList.add('active');
     document.getElementById('view-filelist').classList.remove('active');
-
     document.getElementById('btn-outline').style.display = activeId ? '' : 'none';
     document.getElementById('btn-back').style.display = 'none';
     document.getElementById('font-controls').style.display = activeId ? 'contents' : 'none';
     document.getElementById('btn-files').style.display = '';
-
-    document.getElementById('title').textContent = activeId
-      ? (filesDB[activeId]?.name || 'MD Viewer')
-      : 'MD Viewer';
+    document.getElementById('title').textContent = activeId ? (filesDB[activeId]?.name || 'MD Viewer') : 'MD Viewer';
   }
 
   function showFileList() {
     saveCurrentScroll();
-
     currentView = 'filelist';
-
     document.getElementById('view-reading').classList.remove('active');
     document.getElementById('view-filelist').classList.add('active');
-
     document.getElementById('btn-outline').style.display = 'none';
     document.getElementById('btn-back').style.display = activeId ? '' : 'none';
     document.getElementById('font-controls').style.display = 'none';
     document.getElementById('btn-files').style.display = 'none';
-
     document.getElementById('title').textContent = 'Files';
-
     renderFileList();
   }
 
@@ -659,31 +1033,18 @@
         <div class="file-info">
           <div class="file-name">${esc(f.name)}</div>
           <div class="file-progress-row">
-            <div class="file-progress-bar">
-              <div class="file-progress-fill" style="width:${pct}%"></div>
-            </div>
+            <div class="file-progress-bar"><div class="file-progress-fill" style="width:${pct}%"></div></div>
             <div class="file-progress-text">${pct}%</div>
           </div>
         </div>
         <button class="file-delete" onclick="deleteFile('${id}',event)" aria-label="Delete">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
-            <path d="M10 11v6"/>
-            <path d="M14 11v6"/>
-            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
           </svg>
         </button>
       </div>`;
     }).join('');
-  }
-
-  function esc(s) {
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
   }
 
   // ══════════════════════════════════════════════════
@@ -700,13 +1061,12 @@
 
     list.innerHTML = Array.from(hh).map((h, i) => {
       h.id = 'h1-' + i;
-      return `<div class="outline-item" onclick="goTo('h1-${i}')">${esc(h.textContent).replace(/'/g, '&#39;')}</div>`;
+      return `<div class="outline-item" onclick="goTo('h1-${i}')">${esc(h.textContent)}</div>`;
     }).join('');
   }
 
   function goTo(id) {
     toggleOutline();
-
     setTimeout(() => {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -724,10 +1084,8 @@
   // ══════════════════════════════════════════════════
   function changeFontSize(d) {
     currentSize = Math.min(26, Math.max(13, currentSize + d));
-
     document.documentElement.style.setProperty('--size', currentSize + 'px');
     document.getElementById('font-label').textContent = currentSize;
-
     saveFont();
   }
 
@@ -739,13 +1097,11 @@
 
     document.addEventListener('touchstart', e => {
       const t = e.touches[0];
-
       if (t.clientX <= 28 && !outlineOpen && currentView === 'reading') {
         sx = t.clientX;
         sy = t.clientY;
         tr = true;
       }
-
       if (outlineOpen && !e.target.closest('.drawer')) {
         sx = t.clientX;
         sy = t.clientY;
@@ -754,22 +1110,16 @@
     }, { passive: true });
 
     document.addEventListener('touchmove', e => {
-      if (!e.target.closest('.content,.drawer-body,.filelist-view')) {
-        e.preventDefault();
-      }
+      if (!e.target.closest('.content,.drawer-body,.filelist-view')) e.preventDefault();
     }, { passive: false });
 
     document.addEventListener('touchend', e => {
       if (!tr) return;
-
       tr = false;
-
       const t = e.changedTouches[0];
       const dx = t.clientX - sx;
       const dy = Math.abs(t.clientY - sy);
-
       if (dy > Math.abs(dx) * 1.2) return;
-
       if (!outlineOpen && dx > 60) toggleOutline();
       else if (outlineOpen && dx < -60) toggleOutline();
     }, { passive: true });
@@ -778,10 +1128,12 @@
   // ══════════════════════════════════════════════════
   //  Init
   // ══════════════════════════════════════════════════
-  marked.setOptions({
-    headerIds: false,
-    mangle: false
-  });
+  if (typeof marked !== 'undefined' && marked && typeof marked.setOptions === 'function') {
+    marked.setOptions({
+      headerIds: false,
+      mangle: false
+    });
+  }
 
   loadState();
 
