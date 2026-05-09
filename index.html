@@ -394,40 +394,61 @@
       filesDB[id] = { name: f.name, content: await f.text(), scrollPct: 0 };
       lastId = id;
     }
-    saveFiles(); input.value = '';
+    saveFiles(); 
+    input.value = '';
+    renderFileList();    
     if (lastId) openFile(lastId);
   }
 
   // ══════════════════════════════════════════════════
   //  Open / Render
   // ══════════════════════════════════════════════════
-  function openFile(id, options = {}) {
-    const entry = filesDB[id]; 
-    if (!entry) return;
-  
-    const { restoreOnly = false } = options;
-  
-    if (!restoreOnly && activeId && activeId !== id) {
-      saveCurrentScroll();
-    }
-  
-    activeId = id; 
-    saveActive();
-  
-    document.getElementById('title').textContent = entry.name;
-  
-    const html = marked.parse(preprocessMarkdown(entry.content), { breaks: true, gfm: true });
+function openFile(id, options = {}) {
+  const entry = filesDB[id]; 
+  if (!entry) return;
+
+  const { restoreOnly = false } = options;
+
+  if (!restoreOnly && activeId && activeId !== id) {
+    saveCurrentScroll();
+  }
+
+  activeId = id; 
+  saveActive();
+
+  document.getElementById('title').textContent = entry.name;
+
+  // 先切到阅读界面，避免后面解析失败时仍停留在 file list
+  showReading();
+
+  try {
+    const html = marked.parse(preprocessMarkdown(entry.content || ''), {
+      breaks: true,
+      gfm: true
+    });
+
     document.getElementById('content').innerHTML = `<div class="md">${html}</div>`;
-  
-    buildOutline(); 
-    showReading();
-  
+
+    buildOutline();
+
     requestAnimationFrame(() => {
       const el = document.getElementById('content-scroll');
       const max = el.scrollHeight - el.clientHeight;
       el.scrollTop = Math.round((entry.scrollPct || 0) * max);
     });
+
+  } catch (err) {
+    console.error('Failed to open markdown file:', err);
+
+    document.getElementById('content').innerHTML = `
+      <div class="md">
+        <h2>Failed to render file</h2>
+        <p style="color:#C5694A;">${esc(String(err.message || err))}</p>
+        <pre>${esc(entry.content || '')}</pre>
+      </div>
+    `;
   }
+}
 
   // ══════════════════════════════════════════════════
   //  Delete
