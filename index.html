@@ -401,17 +401,31 @@
   // ══════════════════════════════════════════════════
   //  Open / Render
   // ══════════════════════════════════════════════════
-  function openFile(id) {
-    const entry = filesDB[id]; if (!entry) return;
-    saveCurrentScroll();
-    activeId = id; saveActive();
+  function openFile(id, options = {}) {
+    const entry = filesDB[id]; 
+    if (!entry) return;
+  
+    const { restoreOnly = false } = options;
+  
+    if (!restoreOnly && activeId && activeId !== id) {
+      saveCurrentScroll();
+    }
+  
+    activeId = id; 
+    saveActive();
+  
     document.getElementById('title').textContent = entry.name;
+  
     const html = marked.parse(preprocessMarkdown(entry.content), { breaks: true, gfm: true });
     document.getElementById('content').innerHTML = `<div class="md">${html}</div>`;
-    buildOutline(); showReading();
+  
+    buildOutline(); 
+    showReading();
+  
     requestAnimationFrame(() => {
       const el = document.getElementById('content-scroll');
-      el.scrollTop = Math.round(entry.scrollPct * (el.scrollHeight - el.clientHeight));
+      const max = el.scrollHeight - el.clientHeight;
+      el.scrollTop = Math.round((entry.scrollPct || 0) * max);
     });
   }
 
@@ -445,8 +459,15 @@
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(saveCurrentScroll, 400);
   }, { passive: true });
-
-  document.addEventListener('visibilitychange', () => { if (document.hidden) saveCurrentScroll(); });
+  
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      saveCurrentScroll();
+    }
+  });
+  
+  window.addEventListener('pagehide', saveCurrentScroll);
+  window.addEventListener('beforeunload', saveCurrentScroll);
 
   // ══════════════════════════════════════════════════
   //  View switching
@@ -578,9 +599,9 @@
   loadState();
   document.documentElement.style.setProperty('--size', currentSize + 'px');
   document.getElementById('font-label').textContent = currentSize;
-
+  
   if (activeId && filesDB[activeId]) {
-    openFile(activeId);
+    openFile(activeId, { restoreOnly: true });
   } else {
     showWelcome();
     showReading();
