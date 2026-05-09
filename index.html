@@ -57,14 +57,12 @@
     font-family: var(--sans);
   }
 
-  /* ── App Shell ── */
   .app {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
 
-  /* ── Top Bar ── */
   .topbar {
     display: flex;
     align-items: center;
@@ -124,10 +122,8 @@
     flex-shrink: 0;
   }
 
-  /* hidden file input */
   #file-input { display: none; }
 
-  /* ── Content Area ── */
   .content {
     flex: 1;
     overflow-y: auto;
@@ -143,7 +139,6 @@
     margin: 0 auto;
   }
 
-  /* ── Welcome ── */
   .welcome {
     display: flex;
     flex-direction: column;
@@ -176,7 +171,6 @@
   }
   .welcome-btn:active { background: var(--accent-hover); }
 
-  /* ── Outline Drawer ── */
   .overlay {
     position: fixed;
     inset: 0;
@@ -202,6 +196,15 @@
     padding-left: var(--sal);
   }
   .drawer.open { transform: translateX(0); }
+
+  .drawer-right {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+    padding-left: 0;
+    padding-right: var(--sar);
+  }
+  .drawer-right.open { transform: translateX(0); }
 
   .drawer-header {
     display: flex;
@@ -238,7 +241,8 @@
   }
   .outline-item:active { background: var(--bg-hover); }
 
-  .outline-empty {
+  .outline-empty,
+  .file-empty {
     padding: 32px 16px;
     text-align: center;
     color: var(--text-3);
@@ -246,7 +250,64 @@
     line-height: 1.6;
   }
 
-  /* ── Markdown Body ── */
+  .import-panel {
+    padding: 8px 6px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .12s var(--ease);
+  }
+  .file-item:active { background: var(--bg-hover); }
+  .file-item.current { background: var(--accent-light); }
+
+  .file-item-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .file-meta {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--text-3);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .small-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-bar);
+    border: none;
+    border-radius: 9px;
+    color: var(--text-2);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .12s var(--ease), color .12s var(--ease);
+  }
+  .small-btn:active { background: var(--bg-active); color: var(--text-1); }
+
   .md {
     font-family: var(--serif);
     font-size: var(--size);
@@ -334,7 +395,6 @@
   .md hr { border: none; height: 1px; background: var(--border); margin: 1.8em 0; }
   .md input[type="checkbox"] { margin-right: 5px; accent-color: var(--accent); }
 
-  /* Scrollbar — thin for iPad, hidden on iPhone */
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 </style>
@@ -345,23 +405,40 @@
   <!-- Top Bar -->
   <div class="topbar">
     <button class="icon-btn" id="btn-outline" onclick="toggleOutline()" aria-label="Outline">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="15" y2="12"/>
+        <line x1="3" y1="18" x2="18" y2="18"/>
+      </svg>
     </button>
 
     <span class="topbar-title" id="title">MD Viewer</span>
 
     <button class="icon-btn" onclick="changeFontSize(-1)" aria-label="Smaller text">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><text x="4" y="18" font-size="16" font-family="Georgia" fill="currentColor" stroke="none">A</text><line x1="17" y1="13" x2="23" y2="13" stroke-width="2.2"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <text x="4" y="18" font-size="16" font-family="Georgia" fill="currentColor" stroke="none">A</text>
+        <line x1="17" y1="13" x2="23" y2="13" stroke-width="2.2"/>
+      </svg>
     </button>
     <span class="font-label" id="font-label">17</span>
     <button class="icon-btn" onclick="changeFontSize(1)" aria-label="Larger text">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><text x="2" y="18" font-size="18" font-family="Georgia" fill="currentColor" stroke="none">A</text><line x1="17" y1="13" x2="23" y2="13" stroke-width="2.2"/><line x1="20" y1="10" x2="20" y2="16" stroke-width="2.2"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <text x="2" y="18" font-size="18" font-family="Georgia" fill="currentColor" stroke="none">A</text>
+        <line x1="17" y1="13" x2="23" y2="13" stroke-width="2.2"/>
+        <line x1="20" y1="10" x2="20" y2="16" stroke-width="2.2"/>
+      </svg>
     </button>
 
     <div class="divider"></div>
 
-    <button class="icon-btn accent" onclick="document.getElementById('file-input').click()" aria-label="Import file">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <!-- Right top icon now opens file list -->
+    <button class="icon-btn accent" onclick="toggleFileList()" aria-label="Files">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 5h16v14H4z"/>
+        <line x1="8" y1="9" x2="16" y2="9"/>
+        <line x1="8" y1="13" x2="16" y2="13"/>
+        <line x1="8" y1="17" x2="13" y2="17"/>
+      </svg>
     </button>
     <input type="file" id="file-input" accept=".md,.markdown,.txt" onchange="importFile(this)">
   </div>
@@ -378,20 +455,25 @@
           <line x1="18" y1="42" x2="44" y2="42"/>
         </svg>
         <h2>Markdown Viewer</h2>
-        <p>Import a .md file to start reading</p>
-        <button class="welcome-btn" onclick="document.getElementById('file-input').click()">Import File</button>
+        <p>Open the file list to import or continue reading</p>
+        <button class="welcome-btn" onclick="triggerImport()">Import File</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closePanels()"></div>
+
 <!-- Outline Drawer -->
-<div class="overlay" id="overlay" onclick="toggleOutline()"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-header">
     <h3>Outline</h3>
     <button class="icon-btn" onclick="toggleOutline()" aria-label="Close outline">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
     </button>
   </div>
   <div class="drawer-body" id="outline-list">
@@ -399,12 +481,126 @@
   </div>
 </aside>
 
+<!-- File List Drawer -->
+<aside class="drawer drawer-right" id="file-drawer">
+  <div class="drawer-header">
+    <h3 id="file-drawer-title">Files</h3>
+    <button class="icon-btn" onclick="toggleFileList()" aria-label="Close file list">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="file-list"></div>
+</aside>
+
 <script>
+  // ══════════════════════════════════════════════════
+  //  IndexedDB
+  // ══════════════════════════════════════════════════
+  const DB_NAME = 'md-viewer-mobile';
+  const DB_VERSION = 1;
+  const STORE_FILES = 'files';
+  const STORE_SETTINGS = 'settings';
+
+  let dbPromise = null;
+
+  function openDB() {
+    if (dbPromise) return dbPromise;
+
+    dbPromise = new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(STORE_FILES)) {
+          db.createObjectStore(STORE_FILES, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(STORE_SETTINGS)) {
+          db.createObjectStore(STORE_SETTINGS, { keyPath: 'key' });
+        }
+      };
+
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+
+    return dbPromise;
+  }
+
+  async function dbGet(store, key) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, 'readonly');
+      const req = tx.objectStore(store).get(key);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function dbPut(store, value) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, 'readwrite');
+      tx.objectStore(store).put(value);
+      tx.oncomplete = () => resolve(value);
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function dbDelete(store, key) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, 'readwrite');
+      tx.objectStore(store).delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function dbGetAllFiles() {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_FILES, 'readonly');
+      const req = tx.objectStore(STORE_FILES).getAll();
+      req.onsuccess = () => {
+        const list = (req.result || []).slice().sort((a, b) => {
+          const an = (a.name || '').toLowerCase();
+          const bn = (b.name || '').toLowerCase();
+          return an.localeCompare(bn, 'zh-Hans', { sensitivity: 'base' });
+        });
+        resolve(list);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function loadSettings() {
+    const rec = await dbGet(STORE_SETTINGS, 'app');
+    return (rec && rec.value) ? rec.value : {};
+  }
+
+  async function saveSettings(next) {
+    const current = await loadSettings();
+    const merged = { ...current, ...next };
+    await dbPut(STORE_SETTINGS, { key: 'app', value: merged });
+    return merged;
+  }
+
   // ══════════════════════════════════════════════════
   //  State
   // ══════════════════════════════════════════════════
   let currentSize = 17;
   let outlineOpen = false;
+  let fileListOpen = false;
+
+  let currentFileId = null;
+  let currentFile = null;
+  let filesCache = [];
+
+  let saveTimer = null;
+  let isRestoringScroll = false;
 
   // ══════════════════════════════════════════════════
   //  Markdown Preprocessing — fix bold + Unicode punct
@@ -482,24 +678,238 @@
   }
 
   // ══════════════════════════════════════════════════
-  //  Import File
+  //  UI Helpers
   // ══════════════════════════════════════════════════
+  function updatePanelStates() {
+    document.getElementById('drawer').classList.toggle('open', outlineOpen);
+    document.getElementById('file-drawer').classList.toggle('open', fileListOpen);
+    document.getElementById('overlay').classList.toggle('open', outlineOpen || fileListOpen);
+  }
+
+  function closePanels() {
+    outlineOpen = false;
+    fileListOpen = false;
+    updatePanelStates();
+  }
+
+  function toggleOutline() {
+    fileListOpen = false;
+    outlineOpen = !outlineOpen;
+    if (outlineOpen) buildOutline();
+    updatePanelStates();
+  }
+
+  function toggleFileList() {
+    outlineOpen = false;
+    fileListOpen = !fileListOpen;
+    if (fileListOpen) renderFileList();
+    updatePanelStates();
+  }
+
+  function triggerImport() {
+    document.getElementById('file-input').click();
+  }
+
+  function setWelcomeView() {
+    currentFileId = null;
+    currentFile = null;
+    document.getElementById('title').textContent = 'MD Viewer';
+    document.getElementById('content-scroll').scrollTop = 0;
+    document.getElementById('content').innerHTML = `
+      <div class="welcome">
+        <svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="8" y="4" width="48" height="56" rx="4"/>
+          <line x1="18" y1="18" x2="46" y2="18"/>
+          <line x1="18" y1="26" x2="42" y2="26"/>
+          <line x1="18" y1="34" x2="38" y2="34"/>
+          <line x1="18" y1="42" x2="44" y2="42"/>
+        </svg>
+        <h2>Markdown Viewer</h2>
+        <p>Open the file list to import or continue reading</p>
+        <button class="welcome-btn" onclick="triggerImport()">Import File</button>
+      </div>
+    `;
+    document.getElementById('outline-list').innerHTML = '<div class="outline-empty">Open a file to see<br>its outline</div>';
+  }
+
+  function renderFileList() {
+    const body = document.getElementById('file-list');
+    const title = document.getElementById('file-drawer-title');
+    body.innerHTML = '';
+    title.textContent = `Files${filesCache.length ? ` (${filesCache.length})` : ''}`;
+
+    const importPanel = document.createElement('div');
+    importPanel.className = 'import-panel';
+
+    const importBtn = document.createElement('button');
+    importBtn.className = 'welcome-btn';
+    importBtn.style.width = '100%';
+    importBtn.style.marginTop = '0';
+    importBtn.textContent = 'Import File';
+    importBtn.onclick = triggerImport;
+    importPanel.appendChild(importBtn);
+    body.appendChild(importPanel);
+
+    if (!filesCache.length) {
+      const empty = document.createElement('div');
+      empty.className = 'file-empty';
+      empty.innerHTML = 'No imported files yet.<br>Tap “Import File” to add one.';
+      body.appendChild(empty);
+      return;
+    }
+
+    filesCache.forEach(file => {
+      const item = document.createElement('div');
+      item.className = 'file-item' + (file.id === currentFileId ? ' current' : '');
+
+      const main = document.createElement('div');
+      main.className = 'file-item-main';
+
+      const name = document.createElement('div');
+      name.className = 'file-name';
+      name.textContent = file.name || 'Untitled';
+
+      const meta = document.createElement('div');
+      meta.className = 'file-meta';
+      const progress = Math.max(0, Math.min(100, Math.round((file.scrollRatio || 0) * 100)));
+      meta.textContent = progress > 0 ? `Read ${progress}%` : 'Not read yet';
+
+      main.appendChild(name);
+      main.appendChild(meta);
+
+      const del = document.createElement('button');
+      del.className = 'small-btn';
+      del.title = 'Delete';
+      del.setAttribute('aria-label', 'Delete file');
+      del.innerHTML = `
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/>
+          <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+          <line x1="10" y1="11" x2="10" y2="17"/>
+          <line x1="14" y1="11" x2="14" y2="17"/>
+        </svg>
+      `;
+      del.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await deleteFile(file.id);
+      });
+
+      item.addEventListener('click', () => openFileById(file.id));
+      item.appendChild(main);
+      item.appendChild(del);
+      body.appendChild(item);
+    });
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Import / Open / Delete
+  // ══════════════════════════════════════════════════
+  function makeFileId(file) {
+    return `${file.name}__${file.size}__${file.lastModified}`;
+  }
+
   async function importFile(input) {
-    const file = input.files[0];
+    const file = input.files && input.files[0];
     if (!file) return;
 
-    const text = await file.text();
-    document.getElementById('title').textContent = file.name;
+    try {
+      const text = await file.text();
+      const id = makeFileId(file);
+      const existing = await dbGet(STORE_FILES, id);
 
-    const processed = preprocessMarkdown(text);
+      const record = {
+        id,
+        name: file.name,
+        content: text,
+        scrollTop: existing?.scrollTop ?? 0,
+        scrollRatio: existing?.scrollRatio ?? 0,
+        createdAt: existing?.createdAt ?? Date.now(),
+        updatedAt: Date.now()
+      };
+
+      await dbPut(STORE_FILES, record);
+      await saveSettings({ lastFileId: id });
+      await refreshFilesCache();
+      await openFileById(id);
+    } finally {
+      input.value = '';
+    }
+  }
+
+  async function refreshFilesCache() {
+    filesCache = await dbGetAllFiles();
+    if (fileListOpen) renderFileList();
+  }
+
+  async function openFileById(id) {
+    if (!id) return;
+
+    if (currentFileId) {
+      await flushProgressSave();
+    }
+
+    const file = await dbGet(STORE_FILES, id);
+    if (!file) {
+      await refreshFilesCache();
+      setWelcomeView();
+      return;
+    }
+
+    closePanels();
+
+    currentFileId = file.id;
+    currentFile = file;
+    document.getElementById('title').textContent = file.name || 'Untitled';
+
+    const processed = preprocessMarkdown(file.content || '');
     const html = marked.parse(processed, { breaks: true, gfm: true });
     document.getElementById('content').innerHTML = `<div class="md">${html}</div>`;
 
     buildOutline();
-    document.getElementById('content-scroll').scrollTop = 0;
 
-    // Reset input so same file can be re-imported
-    input.value = '';
+    await saveSettings({ lastFileId: id });
+    await refreshFilesCache();
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const scroller = document.getElementById('content-scroll');
+        const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+        const ratio = typeof file.scrollRatio === 'number' ? file.scrollRatio : null;
+        const top = typeof file.scrollTop === 'number' ? file.scrollTop : 0;
+
+        let target = 0;
+        if (ratio !== null) {
+          target = Math.round(ratio * maxScroll);
+        } else {
+          target = Math.min(top, maxScroll);
+        }
+
+        isRestoringScroll = true;
+        scroller.scrollTop = target;
+        setTimeout(() => {
+          isRestoringScroll = false;
+        }, 80);
+      });
+    });
+  }
+
+  async function deleteFile(id) {
+    const file = filesCache.find(f => f.id === id);
+    const ok = confirm(`Delete "${file?.name || 'this file'}"?`);
+    if (!ok) return;
+
+    await dbDelete(STORE_FILES, id);
+
+    if (currentFileId === id) {
+      currentFileId = null;
+      currentFile = null;
+      await saveSettings({ lastFileId: null });
+      setWelcomeView();
+    }
+
+    await refreshFilesCache();
+    if (fileListOpen) renderFileList();
   }
 
   // ══════════════════════════════════════════════════
@@ -523,48 +933,125 @@
 
   function goToHeading(id) {
     toggleOutline();
-    // Small delay so drawer closes before scroll
     setTimeout(() => {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 120);
   }
 
-  function toggleOutline() {
-    outlineOpen = !outlineOpen;
-    document.getElementById('drawer').classList.toggle('open', outlineOpen);
-    document.getElementById('overlay').classList.toggle('open', outlineOpen);
-  }
-
   // ══════════════════════════════════════════════════
   //  Font Size
   // ══════════════════════════════════════════════════
-  function changeFontSize(delta) {
-    currentSize = Math.min(26, Math.max(13, currentSize + delta));
+  async function setFontSize(size) {
+    currentSize = Math.min(26, Math.max(13, size));
     document.documentElement.style.setProperty('--size', currentSize + 'px');
     document.getElementById('font-label').textContent = currentSize;
+    await saveSettings({ fontSize: currentSize });
   }
 
-  // ── Configure marked ──
+  function changeFontSize(delta) {
+    setFontSize(currentSize + delta);
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Scroll Progress
+  // ══════════════════════════════════════════════════
+  function scheduleProgressSave() {
+    if (!currentFileId || isRestoringScroll) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveCurrentProgress();
+    }, 180);
+  }
+
+  async function saveCurrentProgress() {
+    if (!currentFileId || isRestoringScroll) return;
+
+    const scroller = document.getElementById('content-scroll');
+    const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+    const scrollTop = scroller.scrollTop;
+    const scrollRatio = maxScroll > 0 ? (scrollTop / maxScroll) : 0;
+
+    currentFile = {
+      ...(currentFile || {}),
+      id: currentFileId,
+      scrollTop,
+      scrollRatio,
+      updatedAt: Date.now()
+    };
+
+    await dbPut(STORE_FILES, currentFile);
+
+    const idx = filesCache.findIndex(f => f.id === currentFileId);
+    if (idx >= 0) {
+      filesCache[idx] = { ...filesCache[idx], scrollTop, scrollRatio, updatedAt: currentFile.updatedAt };
+      if (fileListOpen) renderFileList();
+    }
+  }
+
+  async function flushProgressSave() {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+    await saveCurrentProgress();
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Init
+  // ══════════════════════════════════════════════════
   marked.setOptions({ headerIds: false, mangle: false });
+
+  async function initApp() {
+    try {
+      const settings = await loadSettings();
+      currentSize = Math.min(26, Math.max(13, settings.fontSize || 17));
+      document.documentElement.style.setProperty('--size', currentSize + 'px');
+      document.getElementById('font-label').textContent = currentSize;
+
+      await refreshFilesCache();
+
+      if (settings.lastFileId) {
+        const last = await dbGet(STORE_FILES, settings.lastFileId);
+        if (last) {
+          await openFileById(last.id);
+          return;
+        }
+      }
+
+      setWelcomeView();
+    } catch (err) {
+      console.error(err);
+      setWelcomeView();
+    }
+  }
+
+  // ══════════════════════════════════════════════════
+  //  Events
+  // ══════════════════════════════════════════════════
+  document.getElementById('content-scroll').addEventListener('scroll', scheduleProgressSave, { passive: true });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) saveCurrentProgress();
+  });
+
+  window.addEventListener('beforeunload', () => {
+    saveCurrentProgress();
+  });
 
   // ══════════════════════════════════════════════════
   //  Left-edge swipe gesture → open Outline
   // ══════════════════════════════════════════════════
   {
     let touchStartX = 0, touchStartY = 0, tracking = false;
-    const EDGE_ZONE = 28;      // px from left edge
-    const SWIPE_THRESHOLD = 60; // px horizontal distance to trigger
+    const EDGE_ZONE = 28;
+    const SWIPE_THRESHOLD = 60;
 
     document.addEventListener('touchstart', (e) => {
       const t = e.touches[0];
-      // Start tracking only if touch begins in the left edge zone
       if (t.clientX <= EDGE_ZONE && !outlineOpen) {
         touchStartX = t.clientX;
         touchStartY = t.clientY;
         tracking = true;
       }
-      // If drawer is open, track for swipe-to-close
       if (outlineOpen && !e.target.closest('.drawer')) {
         touchStartX = t.clientX;
         touchStartY = t.clientY;
@@ -573,7 +1060,6 @@
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-      // Prevent overscroll on non-scrollable areas
       if (!e.target.closest('.content, .drawer-body')) e.preventDefault();
     }, { passive: false });
 
@@ -585,18 +1071,17 @@
       const dx = t.clientX - touchStartX;
       const dy = Math.abs(t.clientY - touchStartY);
 
-      // Only trigger if horizontal movement dominates
       if (dy > Math.abs(dx) * 1.2) return;
 
       if (!outlineOpen && dx > SWIPE_THRESHOLD) {
-        // Swipe right from left edge → open
         toggleOutline();
       } else if (outlineOpen && dx < -SWIPE_THRESHOLD) {
-        // Swipe left while open → close
         toggleOutline();
       }
     }, { passive: true });
   }
+
+  initApp();
 </script>
 
 </body>
